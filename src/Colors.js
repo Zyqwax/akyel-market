@@ -1,19 +1,20 @@
 const Colors = {
   main: "#48B600",
-  white: "#FFFFFF",
-  black: "#000000",
+  accent: "#00BCD4",
   lightBlack: "#BCBCBC",
-  orange: "#FFCE31",
-  red: "#FF0000",
   gray: "#F4F4F4",
   subGreen: "#EEFAE6",
   darkGray: "#AAAAAA",
   deepGray: "#E1F0D7",
   deepestGray: "#C4C4C4",
   darkestGray: "#363636",
-  blue: "#3B87F9",
-  underline: "#E5E5E5",
-  paypal: "#FFB730",
+  text: "#FFFFFF",
+  primaryText: "#212121",
+  secondaryText: "#757575",
+  white: "#FFFFFF",
+  black: "#000000",
+  error: "#B00020",
+  divider: "#BDBDBD",
 };
 
 export default Colors;

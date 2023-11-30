@@ -1,12 +1,9 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import ProfileScreen from "../Screens/ProfileScreen";
-import EditProducts from "../Screens/EditProducts";
-import NewProduct from "../Screens/NewProduct";
-import ChangeProduct from "../Screens/ChangeProduct";
-import OrderHistory from "../Screens/OrderHistory";
+import ProductsScreen from "../Screens/ProductsScreen";
+import BuyScreen from "../Screens/BuyScreen";
 
-export default function StackNav() {
+export default function AdminNav() {
   const Stack = createNativeStackNavigator();
 
   return (
@@ -17,11 +14,8 @@ export default function StackNav() {
         animationDuration: 1000,
       }}
     >
-      <Stack.Screen name="Profile" component={ProfileScreen} />
-      <Stack.Screen name="EditProducts" component={EditProducts} />
-      <Stack.Screen name="NewProduct" component={NewProduct} />
-      <Stack.Screen name="ChangeProduct" component={ChangeProduct} />
-      <Stack.Screen name="OrderHistory" component={OrderHistory} />
+      <Stack.Screen name="Products" component={ProductsScreen} />
+      <Stack.Screen name="BuyScreen" component={BuyScreen} />
     </Stack.Navigator>
   );
 }

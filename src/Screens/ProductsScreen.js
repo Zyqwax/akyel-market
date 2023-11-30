@@ -1,56 +1,63 @@
-import React, { useEffect, useState } from "react";
-import { Text, ScrollView, Flex, Image, Box, Heading, View, Stack } from "native-base";
-import { collection, query, onSnapshot } from "firebase/firestore";
-import { db } from "../firebase";
+import React, { useState } from "react";
+import { Text, ScrollView, Image, Heading, Stack, Button, Input } from "native-base";
+import { useMyContext } from "../MyProvider";
+import Layout from "../Components/Layout";
 import Colors from "../Colors";
 
-export default function ProductsScreen() {
-  const [products, setProducts] = useState([]);
+export default function ProductsScreen({ navigation }) {
+  const { products } = useMyContext();
+  const [filter, setFilter] = useState("");
 
-  useEffect(() => {
-    const q = query(collection(db, "products"));
-    const unsub = onSnapshot(q, (snapshot) => {
-      const fetchedDocs = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      setProducts(fetchedDocs);
-    });
-    return unsub;
-  }, []);
+  const filtredProducts = products.filter((p) => p.title.toLowerCase().includes(filter.toLowerCase()));
+
+  const handleBuy = (id) => {
+    navigation.navigate("BuyScreen", { productId: id });
+  };
 
   return (
-    <View flex={1} bg={Colors.white}>
-      <Stack space={1} w="full" px={6} bg={Colors.main} py={4} alignItems="center" safeAreaTop></Stack>
-      <ScrollView showsVerticalScrollIndicator={false} flex={1}>
-        <Flex flexWrap="wrap" direction="row" justifyContent="space-between" px={5}>
-          {products.map((p) => (
-            <Stack
-              key={p.id}
-              flexBasis="48%"
-              bg={Colors.white}
-              rounded="md"
-              shadow={2}
-              pt={2}
-              my={3}
-              overflow="hidden"
-              borderColor={Colors.gray}
-              borderWidth={1}
-            >
-              <Image source={{ uri: p.thumbnail }} alt={p.title} w="full" h={24} resizeMode="contain" />
-              <Box px={4} pt={2}>
-                <Text fontSize={12} m={2} bold isTruncated numberOfLines={2} w="full" color={Colors.darkestGray}>
-                  {p.title}
-                </Text>
-                <Text fontSize={10}>Stok : {p.countInStock}</Text>
-                <Heading size="sm" bold my={2} color={Colors.darkestGray}>
-                  ₺{p.price}
-                </Heading>
-              </Box>
+    <Layout title="Akyel Martket">
+      <Stack px={2} mx={4} my={2}>
+        <Input
+          value={filter}
+          onChangeText={(text) => setFilter(text)}
+          rounded="full"
+          p={2}
+          borderWidth={2}
+          placeholder="Ürün Ara..."
+        />
+      </Stack>
+      <ScrollView flex={1} showsVerticalScrollIndicator={false}>
+        {filtredProducts.map((p) => (
+          <Stack
+            key={p.id}
+            mx={6}
+            my={2}
+            p={5}
+            bg={Colors.white}
+            rounded="md"
+            shadow={6}
+            overflow="hidden"
+            borderColor={Colors.gray}
+            borderWidth={2}
+          >
+            <Image source={{ uri: p.thumbnail }} alt={p.title} w="full" h={40} resizeMode="contain" />
+            <Stack>
+              <Text fontSize={16} m={2} bold w="full" color={Colors.darkestGray}>
+                {p.title}
+              </Text>
+              <Text px={2} fontSize={12}>
+                Stok : {p.countInStock}
+              </Text>
+              <Heading fontSize={18} px={2} size="sm" bold my={2} color={Colors.darkestGray}>
+                ₺{p.price}
+              </Heading>
             </Stack>
-          ))}
-        </Flex>
+            <Button rounded="full" color="white" bg={Colors.main} size="sm" onPress={() => handleBuy(p.id)}>
+              Satın Al
+            </Button>
+          </Stack>
+        ))}
       </ScrollView>
-    </View>
+    </Layout>
   );
 }

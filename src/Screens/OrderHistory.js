@@ -1,70 +1,68 @@
-import React, { useState, useEffect } from "react";
-import { Text, Box, Pressable, Spacer, HStack, ScrollView, VStack } from "native-base";
-import { Feather } from "@expo/vector-icons";
+import React from "react";
+import { Text, HStack, ScrollView, Stack, Heading, Button } from "native-base";
+import { useMyContext } from "../MyProvider";
+import Layout from "../Components/Layout";
 import Colors from "../Colors";
-import { db } from "../firebase";
-import { query, collection, onSnapshot } from "firebase/firestore";
 
 export default function OrderHistory() {
-  const [history, setHistory] = useState([]);
-  useEffect(() => {
-    const q = query(collection(db, "orderHistory"));
-    const unsub = onSnapshot(q, (snapshot) => {
-      const fetchedDocs = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      setHistory(fetchedDocs);
-    });
-    return unsub;
-  }, []);
+  const { history, removeHistory } = useMyContext();
+  const handleRemove = async (date) => {
+    await removeHistory(date);
+  };
   return (
-    <Box safeAreaTop>
-      <Box bg={Colors.main} h={8}></Box>
+    <Layout title="Satın-Alım Geçmişi">
       <ScrollView showsVerticalScrollIndicator={false}>
-        <Pressable
-          android_ripple={{
-            borderless: false,
-          }}
-          p={4}
-        >
-          <HStack justifyContent="space-between">
-            <Feather name="shield" size={24} color={Colors.darkestGray} />
-            <Text>Müşteri</Text>
-            <Text>Ürün</Text>
-            <Text>Fiyat</Text>
-            <Text>Ödeme</Text>
-            <Text>Tarih</Text>
-          </HStack>
-        </Pressable>
         {history.map((h) => (
-          <Pressable
-            key={h.id}
-            android_ripple={{
-              borderless: false,
-            }}
-            mx={2}
+          <Stack
+            key={h.date}
+            mx={6}
             my={2}
-            px={2}
+            p={2}
+            bg={Colors.white}
+            rounded="md"
+            shadow={6}
+            overflow="hidden"
+            borderColor={Colors.gray}
+            borderWidth={2}
           >
-            <HStack justifyContent="space-between">
-              <Feather name="shopping-cart" size={24} color={Colors.darkestGray} />
-              <Text>{h.user}</Text>
-              <Text>{h.product.title}</Text>
-              <Text>₺{h.product.price}</Text>
-              <Text>{h.method == "cash" ? "Nakit" : "Borç"}</Text>
-              <VStack>
-                <Text fontSize={10} px={4}>
-                  {h.date.toDate().toLocaleDateString("tr-TR")}
+            <Stack>
+              <HStack alignItems="center" justifyContent="space-between">
+                <Text fontSize={16} m={2} bold color={Colors.darkestGray}>
+                  {h.user.name}
                 </Text>
+                <Text>{h.method == "cash" ? "Nakit" : "Borç"}</Text>
+              </HStack>
+              <Text fontSize={12} m={2} bold color={Colors.darkestGray}>
+                Ürün : {h.product.title}
+              </Text>
+              <HStack alignItems="center" justifyContent="space-between">
+                <Heading fontSize={18} px={2} size="sm" bold my={2} color={Colors.darkestGray}>
+                  ₺{h.product.price}
+                </Heading>
                 <Text fontSize={10} px={4}>
-                  {h.date.toDate().toLocaleTimeString("tr-TR")}
+                  {new Date(h.date).toLocaleString("tr-TR", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                    hour: "numeric",
+                    minute: "numeric",
+                  })}
                 </Text>
-              </VStack>
-            </HStack>
-          </Pressable>
+              </HStack>
+              <Button
+                bg={Colors.error}
+                size="sm"
+                rounded="full"
+                my={2}
+                color={Colors.white}
+                onPress={() => handleRemove(h.date)}
+              >
+                Sil
+              </Button>
+            </Stack>
+          </Stack>
         ))}
       </ScrollView>
-    </Box>
+    </Layout>
   );
 }

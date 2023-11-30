@@ -1,5 +1,5 @@
 import React from "react";
-import { StatusBar } from "expo-status-bar";
+import { StatusBar } from "react-native";
 import { NativeBaseProvider } from "native-base";
 import { NavigationContainer } from "@react-navigation/native";
 import { MyProvider } from "./src/MyProvider";
@@ -10,7 +10,7 @@ export default function App() {
   return (
     <MyProvider>
       <NativeBaseProvider>
-        <StatusBar style="light" backgroundColor={Colors.blue} />
+        <StatusBar backgroundColor={Colors.blue} />
         <NavigationContainer>
           <BottomNav />
         </NavigationContainer>

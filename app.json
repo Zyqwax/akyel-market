@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "AykelMarket",
+    "name": "AkyelMarket",
     "slug": "AkyelMarket",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -9,7 +9,7 @@
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "cover",
-      "backgroundColor": "#48B600"
+      "backgroundColor": "#222234"
     },
     "assetBundlePatterns": [
       "**/*"
@@ -20,15 +20,16 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/favicon.png",
-        "backgroundColor": "transparent"
-      }
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.enessamed.AkyelMarket"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "extra": {
       "eas": {
-        "projectId": "46276878-ec63-4a9c-9401-cfd127a0a433"
+        "projectId": "40083659-41df-4303-a312-0b00de1bbd09"
       }
     }
   }

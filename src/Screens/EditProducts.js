@@ -1,99 +1,79 @@
-import React, { useEffect, useState } from "react";
-import { Text, ScrollView, Flex, Image, Box, Heading, View, HStack, Input, Fab, Icon, Stack } from "native-base";
-import { AntDesign, Feather } from "@expo/vector-icons";
-import { collection, deleteDoc, doc, query, onSnapshot } from "firebase/firestore";
-import { db } from "../firebase";
-import Buttone from "../Components/Buttone";
-import Colors from "../Colors";
+import React from "react";
+import { Text, ScrollView, Image, Heading, HStack, Icon, Stack, Button } from "native-base";
+import { Feather } from "@expo/vector-icons";
+import { Pressable } from "react-native";
+import { useMyContext } from "../MyProvider";
 import AlertQ from "../Components/AlertQ";
+import Layout from "../Components/Layout";
+import Colors from "../Colors";
 
 export default function EditProducts({ navigation }) {
-  const [products, setProducts] = useState([]);
-  const [filt, setFilt] = useState("");
-  const [filtedProducts, setFiltedProducts] = useState([]);
-
-  useEffect(() => {
-    const f = products.filter((f) => f.title.includes(filt));
-    setFiltedProducts(f);
-  }, [products, filt]);
-
-  useEffect(() => {
-    const q = query(collection(db, "products"));
-    const unsub = onSnapshot(q, (snapshot) => {
-      const fetchedDocs = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      setProducts(fetchedDocs);
-    });
-    return unsub;
-  }, []);
+  const { products, removeProduct } = useMyContext();
 
   const handleDelete = async (id) => {
-    await deleteDoc(doc(db, "products", id));
+    removeProduct(id);
+  };
+  const handleEdit = (id) => {
+    navigation.navigate("ChangeProduct", { productId: id });
   };
 
   return (
-    <View flex={1} bg={Colors.white}>
-      <HStack space={1} w="full" px={6} bg={Colors.main} py={4} alignItems="center" safeAreaTop></HStack>
+    <Layout title="Ürünleri Düzenle">
       <ScrollView showsVerticalScrollIndicator={false} flex={1}>
-        <Flex flexWrap="wrap" direction="row" justifyContent="space-between" px={5}>
-          {filtedProducts.map((p) => (
-            <Stack
-              key={p.id}
-              flexBasis="48%"
-              bg={Colors.white}
-              rounded="md"
-              shadow={2}
-              pt={2}
-              my={3}
-              overflow="hidden"
-              borderColor={Colors.gray}
-              borderWidth={1}
-            >
-              <Image source={{ uri: p.thumbnail }} alt={p.title} w="full" h={24} resizeMode="contain" />
-              <Box px={4} pt={2}>
-                <Text
-                  fontSize={12}
-                  mt={1}
-                  my={2}
-                  bold
-                  isTruncated
-                  numberOfLines={2}
-                  w="full"
-                  color={Colors.darkestGray}
-                >
-                  {p.title}
-                </Text>
-                <Text fontSize={10}>Stok : {p.countInStock}</Text>
-                <Heading size="sm" bold my={2} color={Colors.darkestGray}>
-                  ₺{p.price}
-                </Heading>
-                {p.countInStock < 1 && <AlertQ title="Stok Bitti!" status="error" />}
-              </Box>
-              <Buttone
-                bg={Colors.main}
-                my={2}
-                size="xs"
-                color={Colors.white}
-                onPress={() => navigation.navigate("ChangeProduct", { barcode: p.barcode })}
-              >
-                Ürünü Düzenle
-              </Buttone>
-              <Buttone bg={Colors.red} my={2} size="xs" color={Colors.white} onPress={() => handleDelete(p.id)}>
-                Ürünü Sil
-              </Buttone>
+        {products.map((p) => (
+          <Stack
+            key={p.id}
+            mx={6}
+            my={2}
+            p={5}
+            bg={Colors.white}
+            rounded="md"
+            shadow={6}
+            overflow="hidden"
+            borderColor={Colors.gray}
+            borderWidth={2}
+          >
+            {p.countInStock === 0 && <AlertQ title="Ürün Stoğu Yok" status="error" my={2} />}
+            <Image source={{ uri: p.thumbnail }} alt={p.title} w="full" h={40} resizeMode="contain" />
+            <Stack>
+              <Text fontSize={16} m={2} bold w="full" color={Colors.darkestGray}>
+                {p.title}
+              </Text>
+              <Text px={2} fontSize={12}>
+                Stok : {p.countInStock}
+              </Text>
+              <Heading fontSize={18} px={2} size="sm" bold my={2} color={Colors.darkestGray}>
+                ₺{p.price}
+              </Heading>
             </Stack>
-          ))}
-        </Flex>
+            <HStack justifyContent="center" style={{ gap: 20 }}>
+              <Button rounded="full" color="white" bg={Colors.main} size="sm" onPress={() => handleEdit(p.id)}>
+                Ürünü Düzenle
+              </Button>
+              <Button rounded="full" color="white" bg={Colors.error} size="sm" onPress={() => handleDelete(p.id)}>
+                Ürünü Sil
+              </Button>
+            </HStack>
+          </Stack>
+        ))}
       </ScrollView>
-      <Fab
-        shadow={2}
-        icon={<Icon as={Feather} name="edit" size="xl" />}
-        bg={Colors.main}
-        bottom={20}
+
+      <Pressable
         onPress={() => navigation.navigate("NewProduct")}
-      />
-    </View>
+        style={{
+          backgroundColor: Colors.main,
+          width: 64,
+          height: 64,
+          borderRadius: 99,
+          justifyContent: "center",
+          alignItems: "center",
+          bottom: 20,
+          right: 20,
+          position: "absolute",
+        }}
+      >
+        <Icon as={Feather} name="edit" size="xl" color={Colors.white} />
+      </Pressable>
+    </Layout>
   );
 }

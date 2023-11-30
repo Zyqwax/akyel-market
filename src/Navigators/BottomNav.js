@@ -1,14 +1,9 @@
 import React from "react";
-import { StyleSheet } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-
-import ProductsScreen from "../Screens/ProductsScreen";
-import BuyScreen from "../Screens/BuyScreen";
-import UserScreen from "../Screens/ProfileScreen";
-
-import Colors from "../Colors";
+import AdminNav from "./AdminNav";
 import StackNav from "./StackNav";
+import Colors from "../Colors";
 
 export default function BottomNav() {
   const Tab = createBottomTabNavigator();
@@ -16,7 +11,11 @@ export default function BottomNav() {
     <Tab.Navigator
       backBehavior="main"
       screenOptions={{
-        tabBarStyle: { ...styles.tab },
+        tabBarStyle: {
+          elevation: 0,
+          backgroundColor: Colors.white,
+          height: 60,
+        },
         headerShown: false,
         tabBarHideOnKeyboard: true,
         tabBarLabelStyle: {
@@ -29,37 +28,21 @@ export default function BottomNav() {
       }}
     >
       <Tab.Screen
-        name="Products"
-        component={ProductsScreen}
+        name="Main"
+        component={StackNav}
         options={{
           tabBarIcon: ({ color }) => <Feather name="clipboard" size={28} color={color} />,
           title: "Ürünler",
         }}
       />
       <Tab.Screen
-        name="Buy"
-        component={BuyScreen}
-        options={{
-          tabBarIcon: ({ color }) => <Feather name="shopping-cart" size={28} color={color} />,
-          title: "Satın Al",
-        }}
-      />
-      <Tab.Screen
-        name="Details"
-        component={StackNav}
+        name="Admin"
+        component={AdminNav}
         options={{
           tabBarIcon: ({ color }) => <Feather name="compass" size={28} color={color} />,
-          title: "Detaylar",
+          title: "Admin",
         }}
       />
     </Tab.Navigator>
   );
 }
-
-const styles = StyleSheet.create({
-  tab: {
-    elevation: 0,
-    backgroundColor: Colors.white,
-    height: 60,
-  },
-});

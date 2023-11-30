@@ -1,0 +1,68 @@
+import React from "react";
+import { Text, ScrollView, HStack, Icon, Stack, Button } from "native-base";
+import { Feather } from "@expo/vector-icons";
+import { useMyContext } from "../MyProvider";
+import { Pressable } from "react-native";
+import Layout from "../Components/Layout";
+import Colors from "../Colors";
+
+export default function EditCustomers({ navigation }) {
+  const { customers, removeCustomer } = useMyContext();
+
+  const handleDelete = async (id) => {
+    await removeCustomer(id);
+  };
+
+  return (
+    <Layout title="Müşterileri Düzenle">
+      <ScrollView showsVerticalScrollIndicator={false} flex={1}>
+        {customers.map((c) => (
+          <Stack
+            key={c.id}
+            mx={6}
+            my={2}
+            p={2}
+            bg={Colors.white}
+            rounded="md"
+            shadow={6}
+            overflow="hidden"
+            borderColor={Colors.gray}
+            borderWidth={2}
+          >
+            <HStack alignItems="center" justifyContent="space-between">
+              <Text fontSize={16} m={2} bold color={Colors.darkestGray}>
+                {c.name}
+              </Text>
+              <Button
+                rounded="full"
+                color="white"
+                bg={Colors.error}
+                size="xs"
+                w={40}
+                onPress={() => handleDelete(c.id)}
+              >
+                Kullanıcıyı Sil
+              </Button>
+            </HStack>
+          </Stack>
+        ))}
+      </ScrollView>
+      <Pressable
+        onPress={() => navigation.navigate("NewCustomer")}
+        style={{
+          backgroundColor: Colors.main,
+          width: 64,
+          height: 64,
+          borderRadius: 99,
+          justifyContent: "center",
+          alignItems: "center",
+          bottom: 20,
+          right: 20,
+          position: "absolute",
+        }}
+      >
+        <Icon as={Feather} name="edit" size="xl" color={Colors.white} />
+      </Pressable>
+    </Layout>
+  );
+}
